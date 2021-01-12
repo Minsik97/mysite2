@@ -17,8 +17,7 @@ import com.javaex.utill.WebUtill;
 @WebServlet("/gbc")
 public class GuestbookController extends HttpServlet {
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String action = request.getParameter("action");
 		System.out.println("action=" + action);

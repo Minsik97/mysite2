@@ -1,4 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import= "com.javaex.vo.UserVo" %>
+
+
+<%
+		UserVo authUser = (UserVo)session.getAttribute("authUser");
+%>
 
 
 
@@ -18,18 +24,19 @@
 		<div id="header">
 			<h1><a href="/mysite2/main">MySite</a></h1>
 			
-			<!-- 
+			<!-- if 로그인이 안됐을 때(session영역에 값이 없으면) -->
+			<% if (authUser==null) {%>
 			<ul>
 				<li><a href="">로그인</a></li>
 				<li><a href="">회원가입</a></li>
 			</ul>
-			-->
-			<ul>
-				<li>황일영 님 안녕하세요^^</li>
+			<%}else{ %>
+			<ul><!-- if 로그인 성공했을 때 (session영역에 값이 있으면) -->
+				<li><%= authUser.getName() %> 님 안녕하세요^^</li>
 				<li><a href="">로그아웃</a></li>
 				<li><a href="">회원정보수정</a></li>
 			</ul>
-			
+			<%} %>
 		</div>
 		<!-- //header -->
 
