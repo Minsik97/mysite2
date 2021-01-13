@@ -98,6 +98,7 @@ public class UserDao {
 
 	}
 	
+	//로그인할 때 세션 저장용
 	public UserVo getUser(String id, String pw) {
 		UserVo userVo = null;
 		
@@ -145,15 +146,16 @@ public class UserDao {
 		try {
 			String query = "";
 					   query +=  " update users ";
-					   query +=  " set name = ?, ";
-					   query +=  " 		 password = ?, ";
+					   query +=  " set password = ?, ";
+					   query +=  " 		 name = ?, ";
 					   query +=  "		 gender = ? ";
 					   query +=  " where no = ? ";
 			
 		    pstmt = conn.prepareStatement(query);
-		    pstmt.setString(1, userVo.getName());
-		    pstmt.setString(2, userVo.getPassword());
+		    pstmt.setString(1, userVo.getPassword());
+		    pstmt.setString(2, userVo.getName());
 		    pstmt.setString(3, userVo.getGender());
+		    pstmt.setInt(4, userVo.getNo());
 		    
 		    count = pstmt.executeUpdate();
 					
@@ -168,7 +170,7 @@ public class UserDao {
 		
 	}
 	
-	public UserVo getUser(int userNo) {
+	public UserVo getUser(int No) {
 		UserVo userVo = null;
 		
 		getConnection();
@@ -184,7 +186,7 @@ public class UserDao {
 						query += " where no = ? ";
 						
 			pstmt = conn.prepareStatement(query);
-			pstmt.setInt(1, userNo);
+			pstmt.setInt(1, No);
 			
 			rs = pstmt.executeQuery();
 			

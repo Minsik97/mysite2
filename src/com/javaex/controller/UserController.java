@@ -70,7 +70,7 @@ public class UserController extends HttpServlet {
 			if (authVo == null) {// 로그인 실패
 				System.out.println("로그인 실패");
 				// 리다이렉트 --> 로그인폼
-				WebUtill.redirect(request, response, "/mysite2/user?action=loginForm");
+				WebUtill.redirect(request, response, "/mysite2/user?action=loginForm&result=fail");
 
 			} else { // 성공일 때
 				System.out.println("로그인 성공");
@@ -97,46 +97,68 @@ public class UserController extends HttpServlet {
 			WebUtill.redirect(request, response, "/mysite2/main");
 			
 		}else if ("modifyForm".equals(action)) {
-			System.out.println("회원정보수정");
+			System.out.println("회원정보수정 폼");
 			
-			//no값을 int로 저장
-			int userNo = Integer.parseInt(request.getParameter("no"));
+			//세션 가져오기 
+			 HttpSession session = request.getSession();
+			 
+			 //세션에 있는 no를 가져오기 위한 작업
+			 //세션영역에 있는 어트리뷰트를 Vo에있는 주소로 받는다
+			UserVo authUser = (UserVo)session.getAttribute("authUser");
 			
-			//dao생성
+			//no받아오기 성공
+			//로그인 안한 상태면 가져올 수 없다.
+			int no = authUser.getNo();
+			
+			//dao생성 (회원정보 가져오기)
 			UserDao userDao = new UserDao();
+			UserVo userVo = userDao.getUser(no);
 			
-			//dao에 값 넣고 vo에 저장
-			UserVo userVo = userDao.getUser(userNo);	
+			//테스트
+			System.out.println("getUser(no)-->" + userVo );
 			
-			//어트리뷰트에 담기
-			request.setAttribute("uVo", userVo);
+			//userVo 전달 (포워드용)
+			request.setAttribute("userVo", userVo);
 			
-			//값 포워드
+			//포워드
 			WebUtill.forward(request, response, "/WEB-INF/views/user/modifyForm.jsp");
+			
+			
 		
 		}else if ("modify".equals(action)) {
-			System.out.println("정보수정");
+			System.out.println("회원정보 수정");
 			
-			//파라비터 값
-			int no = Integer.parseInt(request.getParameter("no"));
+			//파라미터 값 가져오기
+			String password = request.getParameter("pw");
 			String name = request.getParameter("name");
-			String password = request.getParameter("password");
-			String gender = request.getParameter("gender");
+			String gender  = request.getParameter("gender");
 			
-			//파라미터 값 Vo에 넣기
-			UserVo userVo = new UserVo(no, name, password, gender);
+			//테스트
+			System.out.println(password + name + gender);
 			
+			//세션에서 no가져오기
+			HttpSession session = request.getSession();
+			UserVo authUser = (UserVo)session.getAttribute("authUser");
+			int no = authUser.getNo();
+			
+			//UserVo로 만들기
+			UserVo userVo = new UserVo(no, password, name, gender);
+			
+			//테스트
+			System.out.println(userVo);
+			
+			//dao --> update() 실행
 			UserDao userDao = new UserDao();
 			userDao.userUpdate(userVo);
 			
-			//dao -->getUser
-			UserVo authVo = userDao.getUser(no);
 			
-			//세션영역에 저장
-			HttpSession session = request.getSession();
-			session.setAttribute("authUser", authVo);
+			//메인페이지에 이름도 변경되어야함
+			//세션의 정보도 업데이트 해야한다.(수정이 된걸 확인한 후 짜야함.)
+			//session의 name값만 변경하면 된다.
+			authUser.setName(name); 
 			
 			WebUtill.redirect(request, response, "/mysite2/main");
+			
 			
 		}
 
