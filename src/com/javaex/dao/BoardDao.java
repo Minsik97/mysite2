@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.javaex.vo.BoardVo;
+import com.javaex.vo.UserVo;
 
 public class BoardDao {
 
@@ -257,6 +258,42 @@ public class BoardDao {
 		
 		close();
 		return count;
+		
+	}
+	
+	public int up(int up) {
+		
+		int count = 0;
+		
+		getConnection();
+		
+		try {
+			
+			String query = "";
+					    query += " update board ";
+					    query += "  set hit = hit + 1 ";
+					    query += "  where no = ? ";
+					   
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, up);
+			
+			count =pstmt.executeUpdate();
+			
+			//결과처리
+			System.out.println("조회수 " + count + "증가");
+			
+		}catch (SQLException e) {
+			System.out.println("error:" + e);
+		}
+		
+		//정리
+		close();
+
+		return count;
+		
+		
+		
+		
 		
 	}
 	
